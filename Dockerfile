@@ -4,10 +4,8 @@ FROM node:18-alpine
 # Install system dependencies for Railway
 RUN apk add --no-cache \
     ffmpeg \
-    python3 \
-    py3-pip \
-    curl \
-    && pip3 install yt-dlp
+    yt-dlp \
+    curl
 
 WORKDIR /app
 
