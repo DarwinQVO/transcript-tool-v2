@@ -3,7 +3,7 @@ import OpenAI from 'openai'
 import { unlinkSync, existsSync, statSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { extractVideo } from '@/lib/enterprise-extractor'
+import { extractVideoInfo, downloadAudio } from '@/lib/professional-extractor'
 
 export async function POST(req: NextRequest) {
   let tempFilePath: string | null = null
@@ -29,9 +29,9 @@ export async function POST(req: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY,
     })
 
-    // Extract video using enterprise method
-    console.log('Extracting video with enterprise method...')
-    const videoInfo = await extractVideo(url)
+    // Extract video info using professional method
+    console.log('Extracting video with professional method...')
+    const videoInfo = await extractVideoInfo(url)
     
     // Support videos up to 4 hours (Railway compatible)
     if (videoInfo.duration > 14400) {
@@ -41,8 +41,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    tempFilePath = join(tmpdir(), `audio-${Date.now()}.m4a`)
-    require('fs').writeFileSync(tempFilePath, videoInfo.audioBuffer)
+    // Download audio
+    console.log('Downloading audio...')
+    const audioBuffer = await downloadAudio(videoInfo.audioUrl)
+
+    tempFilePath = join(tmpdir(), `audio-${Date.now()}.webm`)
+    require('fs').writeFileSync(tempFilePath, audioBuffer)
 
     // Check file size for Whisper API limit (25MB)
     const stats = statSync(tempFilePath)
@@ -53,8 +57,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const audioFile = new File([videoInfo.audioBuffer], 'audio.m4a', {
-      type: 'audio/mp4'
+    const audioFile = new File([audioBuffer], 'audio.webm', {
+      type: 'audio/webm'
     })
 
     const response = await openai.audio.transcriptions.create({
