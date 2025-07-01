@@ -39,8 +39,8 @@ export default function Home() {
       const metadataData = await metadataResponse.json()
       setMetadata(metadataData)
 
-      if (metadataData.duration > 3660) {
-        throw new Error('Video too long (max 61 minutes)')
+      if (metadataData.duration > 14400) {
+        throw new Error('Video too long (max 4 hours)')
       }
 
       setState({ step: 'transcribing', message: 'Transcribing audio...' })
@@ -99,7 +99,7 @@ export default function Home() {
             YouTube Transcript Tool
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-lg">
-            Extract metadata and generate transcripts from YouTube videos
+            Extract metadata and generate transcripts from YouTube videos up to 4 hours
           </p>
         </div>
 

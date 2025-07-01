@@ -9,7 +9,7 @@ A lightweight web application that extracts metadata and generates transcripts f
 - Modern, responsive UI with dark mode support
 - Download transcripts as text files
 - Copy transcripts to clipboard
-- 61-minute video duration limit to control costs
+- 4-hour video duration limit optimized for Railway deployment
 
 ## Environment Variables
 
@@ -39,7 +39,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## Deployment
 
-This project is configured for zero-config deployment on Railway using Nixpacks.
+This project is configured for Railway deployment using Docker with optimized dependencies.
 
 1. Connect your GitHub repository to Railway
 2. Set the `OPENAI_API_KEY` environment variable

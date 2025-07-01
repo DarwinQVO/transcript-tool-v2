@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
     "next": "14.2.18",
     "openai": "^4.67.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "ytdl-core": "^4.11.5"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.6",

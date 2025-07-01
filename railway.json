@@ -1,5 +1,8 @@
 {
-  "plugins": {
-    "node": {}
+  "build": {
+    "builder": "dockerfile"
+  },
+  "deploy": {
+    "restartPolicyType": "always"
   }
 }
