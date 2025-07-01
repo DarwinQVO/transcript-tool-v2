@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getVideoMetadata } from '@/lib/professional-extractor'
+import { getVideoMetadata } from '@/lib/ultimate-solution'
 
 export async function POST(req: NextRequest) {
   try {
