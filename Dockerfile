@@ -1,14 +1,16 @@
 # Use Node.js LTS
 FROM node:18-slim
 
-# Install system dependencies for Railway
+# Install system dependencies for Railway and Chromium
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     ffmpeg \
+    chromium \
+    chromium-sandbox \
     && rm -rf /var/lib/apt/lists/*
 
-# Install yt-dlp for Railway
+# Install yt-dlp for Railway (fallback)
 RUN pip3 install yt-dlp
 
 WORKDIR /app
