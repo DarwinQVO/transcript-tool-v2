@@ -1,19 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getVideoMetadata } from '@/lib/ultimate-solution'
+import { sanitizeYouTube } from '@/utils/sanitizeYouTube'
 
 export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json()
-
-    if (!url || !isValidYouTubeURL(url)) {
+    
+    const cleanUrl = sanitizeYouTube(url)
+    if (!cleanUrl || !isValidYouTubeURL(cleanUrl)) {
       return NextResponse.json(
         { error: 'Invalid YouTube URL' },
         { status: 400 }
       )
     }
 
-    const metadata = await getVideoMetadata(url)
-    return NextResponse.json(metadata)
+    // Usar oEmbed directo (siempre funciona)
+    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(cleanUrl)}&format=json`
+    const response = await fetch(oembedUrl)
+    
+    if (!response.ok) {
+      throw new Error('Video not found')
+    }
+    
+    const data = await response.json()
+    
+    return NextResponse.json({
+      title: data.title,
+      channel: data.author_name,
+      publishDate: new Date().toLocaleDateString(),
+      duration: 0
+    })
     
   } catch (error) {
     console.error('Metadata extraction error:', error)

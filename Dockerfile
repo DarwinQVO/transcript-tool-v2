@@ -1,27 +1,30 @@
-# Use Node.js LTS
-FROM node:18-slim
+# Railway-optimized Dockerfile
+FROM node:18-alpine
 
 # Install system dependencies for Railway
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
+    ffmpeg \
+    python3 \
+    py3-pip \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && pip3 install yt-dlp
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install Node.js dependencies
 RUN npm ci --only=production
 
-# Copy app source
+# Copy source code
 COPY . .
 
-# Build the app
+# Build the application
 RUN npm run build
 
 # Expose port
 EXPOSE 3000
 
-# Start the app
+# Start the application
 CMD ["npm", "start"]
