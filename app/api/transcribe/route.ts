@@ -5,10 +5,6 @@ import { writeFileSync, unlinkSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 export async function POST(req: NextRequest) {
   let tempFilePath: string | null = null
 
@@ -28,6 +24,10 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       )
     }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
 
     const info = await ytdl.getInfo(url)
     const duration = parseInt(info.videoDetails.lengthSeconds)

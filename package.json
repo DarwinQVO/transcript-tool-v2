@@ -10,15 +10,16 @@
   },
   "dependencies": {
     "next": "14.2.18",
+    "openai": "^4.67.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "ytdl-core": "^4.11.5",
-    "openai": "^4.67.3"
+    "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
     "@types/node": "^20.17.6",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.18",
     "postcss": "^8.4.49",
