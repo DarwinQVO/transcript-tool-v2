@@ -28,12 +28,8 @@ export async function downloadAudio(url: string, outputPath: string): Promise<st
     ];
     
     const actualPath = await new Promise<string>((resolve, reject) => {
-      const ytdlp = spawn('/opt/homebrew/bin/yt-dlp', args, {
-        stdio: 'pipe',
-        env: {
-          ...process.env,
-          PATH: '/opt/homebrew/bin:' + process.env.PATH
-        }
+      const ytdlp = spawn('yt-dlp', args, {
+        stdio: 'pipe'
       });
       
       let stdout = '';

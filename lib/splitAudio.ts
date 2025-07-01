@@ -6,7 +6,7 @@ import { spawn } from "child_process";
 import { downloadAudio } from "./downloadAudio";
 
 // Use system ffmpeg instead of ffmpeg-static
-ffmpeg.setFfmpegPath('/opt/homebrew/bin/ffmpeg');
+ffmpeg.setFfmpegPath('ffmpeg');
 
 export async function downloadAndSplit(url: string, chunkSec = 900) {
   console.log('🔍 downloadAndSplit called with URL:', url);
@@ -21,16 +21,12 @@ export async function downloadAndSplit(url: string, chunkSec = 900) {
     // 1-b probe duration
     console.log('📊 Checking video duration...');
     const info = await new Promise<any>((resolve, reject) => {
-      const ytdlp = spawn('/opt/homebrew/bin/yt-dlp', [
+      const ytdlp = spawn('yt-dlp', [
         url,
         '--dump-single-json',
         '--no-warnings'
       ], {
-        stdio: 'pipe',
-        env: {
-          ...process.env,
-          PATH: '/opt/homebrew/bin:' + process.env.PATH
-        }
+        stdio: 'pipe'
       });
       
       let stdout = '';
