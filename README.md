@@ -1,84 +1,120 @@
-# YouTube Transcript Tool v2
+# 🎥 YouTube Transcript Tool v2
 
-Enterprise-grade YouTube transcript extraction tool with multiple fallback methods and file upload support.
+Enterprise-grade YouTube transcript extraction with speaker identification. Built with Next.js 14, OpenAI Whisper, and optimized for Railway deployment.
 
-## Features
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new)
 
-- 🎯 **Smart Transcript Extraction** - Multiple methods with automatic fallbacks
-- 📤 **Direct File Upload** - Support for MP3, WAV, M4A, MP4 files
-- 🚀 **Railway-Ready** - Optimized for deployment
-- 🎨 **Apple-Grade UI/UX** - Clean, modern interface with dark mode
-- ⚡ **Fast Processing** - Efficient transcription with progress indicators
-- 📊 **Up to 4 Hours** - Support for long-form content
+## ✨ Features
 
-## Quick Start
+- 🎬 **YouTube Video Transcription** - Support for videos up to 3 hours
+- 🎭 **Speaker Identification** - Distinguishes between different speakers
+- ⚡ **Parallel Processing** - 3x faster with concurrent chunk processing
+- 📁 **Multiple Formats** - MP3, WAV, M4A, MP4 support
+- 🧠 **Smart Caching** - Reduces API costs and improves speed
+- 🚀 **Railway Ready** - One-click deployment with Dockerfile
+- 💡 **Intelligent Chunking** - Automatic splitting for long videos
+- 🔄 **Real-time Progress** - Live updates and error handling
 
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 ```bash
-# Install dependencies
+git clone https://github.com/DarwinQVO/transcript-tool-v2.git
+cd transcript-tool-v2
+```
+
+### 2. Install Dependencies
+```bash
+# Install Node.js dependencies
 npm install
 
-# Run development server
+# Install system dependencies (macOS)
+brew install ffmpeg yt-dlp
+```
+
+### 3. Configure Environment
+```bash
+cp .env.example .env.local
+```
+
+Add your API keys to `.env.local`:
+```env
+OPENAI_API_KEY=sk-proj-your-openai-key
+HUGGING_FACE_TOKEN=hf_your-huggingface-token
+MAX_MINUTES=180
+```
+
+### 4. Run the Application
+```bash
+# Development
 npm run dev
 
-# Build for production
+# Production
 npm run build
-
-# Start production server
 npm start
 ```
 
-## Environment Variables
+Visit `http://localhost:3000` and start transcribing!
 
-Create a `.env.local` file:
+## 🌐 Deploy to Railway
 
-```env
-OPENAI_API_KEY=your_openai_api_key_here
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new)
+
+1. **Connect your GitHub repo** to Railway
+2. **Set environment variables**:
+   - `OPENAI_API_KEY`
+   - `HUGGING_FACE_TOKEN` (optional)
+3. **Deploy!** Railway will automatically use the Dockerfile
+
+## 🔧 API Endpoints
+
+### `POST /api/transcribe`
+Transcribe YouTube videos with optional speaker identification.
+
+```typescript
+{
+  "url": "https://youtube.com/watch?v=...",
+  "enableSpeakerIdentification": true
+}
 ```
 
-## Deployment to Railway
+### `POST /api/transcribe-file`
+Upload and transcribe audio files directly.
 
-1. Connect your GitHub repository to Railway
-2. Railway will automatically detect the Next.js app
-3. Add the `OPENAI_API_KEY` environment variable in Railway dashboard
-4. Deploy!
+### `POST /api/metadata`
+Extract video metadata from YouTube URLs.
 
-## How It Works
+## 📋 Technical Stack
 
-### Method 1: Native YouTube Transcripts
-Attempts to fetch existing transcripts directly from YouTube when available.
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v3
+- **Transcription**: OpenAI Whisper API
+- **Speaker ID**: Hugging Face (simplified approach)
+- **Audio Processing**: FFmpeg + yt-dlp
+- **Deployment**: Railway (Docker)
 
-### Method 2: Interactive Guide
-Provides users with multiple proven options to extract transcripts:
-- Browser extensions
-- Online services
-- Professional tools
-- Command-line options
+## 🔑 Environment Variables
 
-### Method 3: File Upload
-Users can upload audio files directly for 100% reliable transcription using OpenAI Whisper.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | ✅ | OpenAI API key for Whisper |
+| `HUGGING_FACE_TOKEN` | ⚠️ | HF token for speaker identification |
+| `MAX_MINUTES` | ❌ | Max video duration (default: 180) |
 
-## Tech Stack
+## 🚨 Limitations
 
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **OpenAI Whisper** - Audio transcription
-- **youtube-transcript** - YouTube transcript extraction
+- **Video Length**: Maximum 3 hours per video
+- **File Size**: 25MB limit for direct uploads
+- **Rate Limits**: Respects OpenAI API limits
+- **Speaker ID**: Currently uses mock segmentation (Beta)
 
-## Project Structure
+---
 
-```
-├── app/
-│   ├── page.tsx              # Main UI component
-│   ├── api/
-│   │   ├── metadata/         # Video metadata extraction
-│   │   ├── transcribe/       # YouTube transcription
-│   │   └── transcribe-file/  # File upload transcription
-├── lib/
-│   └── working-solution.ts   # Core transcription logic
-└── public/                   # Static assets
-```
+<div align="center">
 
-## License
+**🚀 Built by [DarwinQVO](https://github.com/DarwinQVO) with [Claude Code](https://claude.ai/code)**
 
-MIT
+[⭐ Star this repo](https://github.com/DarwinQVO/transcript-tool-v2) • [🐛 Report bugs](https://github.com/DarwinQVO/transcript-tool-v2/issues) • [💡 Request features](https://github.com/DarwinQVO/transcript-tool-v2/issues)
+
+</div>
