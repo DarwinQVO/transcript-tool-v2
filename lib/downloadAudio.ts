@@ -24,7 +24,12 @@ export async function downloadAudio(url: string, outputPath: string): Promise<st
       '--format', 'bestaudio',
       '--no-check-certificates',
       '--no-warnings',
-      '--no-playlist'
+      '--no-playlist',
+      '--user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      '--add-header', 'Accept-Language:en-US,en;q=0.9',
+      '--add-header', 'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      '--extractor-retries', '3',
+      '--fragment-retries', '3'
     ];
     
     const actualPath = await new Promise<string>((resolve, reject) => {
