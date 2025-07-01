@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ytdl from '@distube/ytdl-core'
 import OpenAI from 'openai'
-import { unlinkSync, existsSync, readFileSync, statSync } from 'fs'
+import { unlinkSync, existsSync, statSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { extractYouTubeAudio } from '@/lib/youtube-extractor'
-import { simpleExtractAudio } from '@/lib/simple-extractor'
+import { extractVideo } from '@/lib/enterprise-extractor'
 
 export async function POST(req: NextRequest) {
   let tempFilePath: string | null = null
@@ -13,7 +11,7 @@ export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json()
 
-    if (!url || !ytdl.validateURL(url)) {
+    if (!url || !isValidYouTubeURL(url)) {
       return NextResponse.json(
         { error: 'Invalid YouTube URL' },
         { status: 400 }
@@ -31,59 +29,20 @@ export async function POST(req: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY,
     })
 
-    // Get video info first
-    const info = await ytdl.getInfo(url)
-    const duration = parseInt(info.videoDetails.lengthSeconds)
+    // Extract video using enterprise method
+    console.log('Extracting video with enterprise method...')
+    const videoInfo = await extractVideo(url)
     
     // Support videos up to 4 hours (Railway compatible)
-    if (duration > 14400) {
+    if (videoInfo.duration > 14400) {
       return NextResponse.json(
         { error: 'Video too long (max 4 hours)' },
         { status: 400 }
       )
     }
 
-    tempFilePath = join(tmpdir(), `audio-${Date.now()}.webm`)
-
-    // Try multiple extraction methods
-    let audioBuffer: Buffer
-    
-    try {
-      // Method 1: Enhanced simple extractor with retry logic
-      console.log('Trying enhanced simple extractor...')
-      audioBuffer = await simpleExtractAudio(url)
-      
-    } catch (simpleError) {
-      console.log('Simple extractor failed, trying enterprise extractor...')
-      
-      try {
-        // Method 2: Enterprise browser-based extractor (Railway)
-        if (process.env.NODE_ENV === 'production') {
-          const videoData = await extractYouTubeAudio(url)
-          
-          const audioResponse = await fetch(videoData.audioUrl, {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-              'Referer': 'https://www.youtube.com/',
-            }
-          })
-
-          if (!audioResponse.ok) {
-            throw new Error('Failed to download audio via enterprise method')
-          }
-
-          audioBuffer = Buffer.from(await audioResponse.arrayBuffer())
-        } else {
-          throw new Error('Enterprise extractor only available in production')
-        }
-        
-      } catch (enterpriseError) {
-        console.log('All extraction methods failed')
-        throw new Error('Unable to extract audio from this video. Please try a different video or try again later.')
-      }
-    }
-
-    require('fs').writeFileSync(tempFilePath, audioBuffer)
+    tempFilePath = join(tmpdir(), `audio-${Date.now()}.m4a`)
+    require('fs').writeFileSync(tempFilePath, videoInfo.audioBuffer)
 
     // Check file size for Whisper API limit (25MB)
     const stats = statSync(tempFilePath)
@@ -94,8 +53,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const audioFile = new File([audioBuffer], 'audio.webm', {
-      type: 'audio/webm'
+    const audioFile = new File([videoInfo.audioBuffer], 'audio.m4a', {
+      type: 'audio/mp4'
     })
 
     const response = await openai.audio.transcriptions.create({
@@ -121,6 +80,11 @@ export async function POST(req: NextRequest) {
       }
     }
   }
+}
+
+function isValidYouTubeURL(url: string): boolean {
+  const regex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[\w-]+/
+  return regex.test(url)
 }
 
 export const maxDuration = 300 // 5 minutes Railway timeout
